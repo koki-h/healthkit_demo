@@ -15,7 +15,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        findAllBodyTemperature()
+//        findAllBodyTemperature()
+        findAllBodyWeight()
     }
     
     @IBAction func btnSave(_ sender: Any) {
@@ -141,6 +142,26 @@ class ViewController: UIViewController {
                 }
             }
         }
+    }
+    func findAllBodyWeight() {
+        let bwUnit: HKUnit! = HKUnit.gramUnit(with: HKMetricPrefix.kilo)
+        let bwType: HKQuantityType! = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
+        findAllHealthValueWithUnit(unit: bwUnit, type: bwType , completion: {
+            query, responseObj, error in
+            if error != nil {
+                NSLog(error.debugDescription)
+                return
+            }
+            NSLog("resultObj : \(String(describing: responseObj))")
+            let bwUnit: HKUnit! = HKUnit.gramUnit(with: HKMetricPrefix.kilo)
+            var bwResults: [Double?] = []
+            for bodyWeight: HKQuantitySample in responseObj as! [HKQuantitySample] {
+                let bwQuantity: HKQuantity! = bodyWeight.quantity
+                let bwResult: Double = bwQuantity.doubleValue(for: bwUnit)
+                bwResults.append(bwResult);
+            }
+            NSLog("values : \(bwResults)")
+        })
     }
     
     func findAllBodyTemperature() {
